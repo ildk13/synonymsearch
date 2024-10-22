@@ -46,30 +46,24 @@ public class SynonymServiceTests
     public void AddWord_AddsMoreSynonymsToSameWord()
     {
         // Arrange
-        var request1 = new WordRequest
+        var request = new WordRequest
         {
-            Word = "clean",
-            Synonyms = new List<string> { "wash" }
+            Word = "A",
+            Synonyms = new List<string> { "B" }
         };
 
         var request2 = new WordRequest
         {
-            Word = "wash",
-            Synonyms = new List<string> { "tidy" }
+            Word = "B",
+            Synonyms = new List<string> { "C" }
         };
 
-        // Act
-        sut.AddSynonym(request1);
-        var result = sut.GetSynonyms("clean");
-
-        // Assert
-        result.Should().BeOfType<HashSet<string>>();
-        result.Should().Contain("wash");
         
         // Act 2
+        sut.AddSynonym(request);
         sut.AddSynonym(request2);
-        var result2 = sut.GetSynonyms("clean");
-        
-        result2.Should().Contain("tidy");
+
+        var result2 = sut.GetSynonyms("A");
+        result2.Should().Contain("C");
     }
 }

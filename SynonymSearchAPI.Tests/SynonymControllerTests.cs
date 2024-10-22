@@ -64,21 +64,21 @@ public class SynonymControllerTests
     }
 
     [Fact]
-        public void AddWord_AddsSynonymsSuccessfully()
+    public void AddWord_AddsSynonymsSuccessfully()
+    {
+        // Arrange
+        var request = new WordRequest()
         {
-            // Arrange
-            var request = new WordRequest()
-            {
-                Word = "clean",
-                Synonyms = new List<string> { "wash", "tidy" }
-            };
+            Word = "clean",
+            Synonyms = new List<string> { "wash", "tidy" }
+        };
 
-            synonymService.Setup(s => s.AddSynonym(request));
+        synonymService.Setup(s => s.AddSynonym(request));
 
-            // Act
-            var result = sut.AddWord(request);
+        // Act
+        var result = sut.AddWord(request);
 
-            // Assert
-            result.Should().BeOfType<OkResult>();
-        }
+        // Assert
+        result.Should().BeOfType<OkResult>();
+    }
 }

@@ -8,7 +8,7 @@ public class SynonymService : ISynonymService
     {
         if (synonyms.ContainsKey(word))
         {
-            return synonyms[word];
+            return GetAllSynonymsForWord(word);
         }
 
         throw new Exception($"Couldn't find synonyms to the word: {word}");
@@ -19,7 +19,7 @@ public class SynonymService : ISynonymService
         foreach (var synonym in request.Synonyms)
         {
             AddSynonym(request.Word, synonym);
-            ApplyTransitiveRule(request.Word);              
+            //ApplyTransitiveRule(request.Word);              
         }
     }
 
@@ -30,36 +30,39 @@ public class SynonymService : ISynonymService
             synonyms[word] = new HashSet<string>();
         }
 
-        synonyms[word].Add(synonym);
-
         if (!synonyms.ContainsKey(synonym))
         {
             synonyms[synonym] = new HashSet<string>();
         }
 
+        synonyms[word].Add(synonym);
         synonyms[synonym].Add(word);
     }
 
-    private void ApplyTransitiveRule(string word)
+    private HashSet<string> GetAllSynonymsForWord(string word)
     {
-        if (!synonyms.ContainsKey(word)) 
+        var result = new HashSet<string>();
+        if (!synonyms.ContainsKey(word))
         {
-            return;
+            return result;
         }
 
-        var allSynonyms = new HashSet<string>(synonyms[word]);
-        var toProcess = new Queue<string>(allSynonyms);
 
-        while (toProcess.Count > 0)
+        GetAllSynonymsForWordDFS(word, result, new HashSet<string>());
+        return result;
+
+    }
+
+    private void GetAllSynonymsForWordDFS(string currectWord, HashSet<string> result, HashSet<string> visited)
+    {
+        result.Add(currectWord);
+        visited.Add(currectWord);
+
+        foreach (var synonym in synonyms[currectWord])
         {
-            var current = toProcess.Dequeue();
-            foreach (var synonym in synonyms[current])
+            if (!visited.Contains(synonym))
             {
-                if (allSynonyms.Add(synonym))
-                {
-                    toProcess.Enqueue(synonym);
-                    AddSynonym(word, synonym);
-                }
+                GetAllSynonymsForWordDFS(synonym, result, visited);
             }
         }
     }
