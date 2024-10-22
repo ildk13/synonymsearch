@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: ./SynonymSearchAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5089:8080"
+    networks:
+      - synonym-network
+    environment:
+      - ASPNETCORE_ENVIROMENT=Development
+    
+  react-app:
+    build: 
+      context: ./SynonymSearch/synonymsearchapp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - synonym-network
+
+networks:
+  synonym-network:
+    driver: bridge
+    
